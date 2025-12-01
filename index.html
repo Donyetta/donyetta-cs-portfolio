@@ -9,6 +9,8 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+            background-color: #ffffff;
+            color: #000000;
         }
         header, nav, main, footer {
             margin-bottom: 20px;
@@ -21,14 +23,35 @@
             margin-bottom: 10px;
             width: 300px;
         }
+        /*Featured Content Styles*/
+        #featuredcontent div {
+            padding: 15px;
+            margin: 10px 0;
+            background-color: #f9f9f9;
+        }
+        /*Dark Mode Styles*/
+        body.dark-mode {
+            background-color: #121212;
+            color: #ffffff;
+        }
+        body.dark-mode a {
+            color: #90caf9;
+        }
     </style>
 </head>
 <body>
 
 <header>
     <h1 id="welcome-message">Welcome to My Portfolio!</h1>
+
+    <!-- Dark mode toggle -->
+     <label>
+        <input type="checkbox" id="dark-mode-toggle"> Dark Mode
+     </label>
+     
     <nav>
         <a href="#about">About</a>
+        <a href="#featuredcontent">Featured Content</a>
         <a href="#projects">Projects</a>
         <a href="#contact">Contact</a>
     </nav>
@@ -38,6 +61,22 @@
     <section id="about">
         <h2>About Me</h2>
         <p>Hello! My name is Donyetta and I'm a Software Development & Coding student at ECPI University, passionate about creating user-friendly websites and learning new technologies.</p>
+        <h3>My Skills</h3>
+        <ul id="skills-list"></ul>
+    </section>
+
+    <section id="featuredcontent">
+        <h2>Featured Content</h2>
+        <div id="university-resources">
+            <h3>University Resources</h3>
+            <a href="https://media.ecpi.net/lor/documents/Canvas/UniversityResources.html" target="_blank">ECPI University Resources</a>
+        </div>
+        <div id="personal-projects">
+            <h3>Personal Projects</h3>
+            <a href="https://github.com/Donyetta/Capstone" target="_blank">
+                <img src="https://via.placeholder.com/150" alt="Project1">
+            </a>
+        </div>
     </section>
 
     <section id="projects">
@@ -70,6 +109,7 @@
 </footer>
 
 <script>
+    //  Welcome message prompt
     let userName = prompt("What is your name?");
     if (userName) {
         document.getElementById("welcome-message").innerText = "Welcome, " + userName + "!";
@@ -77,6 +117,41 @@
     } else {
         alert("Welcome to my portfolio!");
     }
+
+    // Skills Loop
+    const skills = ["HTML", "CSS", "JavaScript", "C"];
+    const skillsList = document.getElementById("skills-list");
+    skills.forEach(skill => {
+        const li = document.createElement("li");
+        li.textContent = skill;
+        skillsList.appendChild(li);
+    });
+
+    //Featured Content conditional logic
+    const projectCount = document.querySelectorAll("#projects .project").length;
+    const universityDiv = document.getElementById("university-resources");
+    const personalDiv =document.getElementById("personal-projects");
+
+    if (projectCount > 3) {
+        universityDiv.style.display = "block";
+        personalDiv.style.display = "block";
+    } else {
+        universityDiv.style.display = "none";
+        personalDiv.style.display = "block";
+    }
+
+    //Dark mode 
+    const darkModeToggle = document.getElementById("dark-mode-toggle");
+    darkModeToggle.addEventListener("change", () => {
+        document.body.classList.toggle("dark-mode", darkModeToggle.checked);
+    });
+
+    //Contact form 
+    const submiitBtn = document.getElementById("submit-btn");
+    submitBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        alert("Thank you, ${name}, your mesage has been sent!");
+    });
 </script>
 
 </body>

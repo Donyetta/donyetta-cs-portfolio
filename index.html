@@ -17,12 +17,18 @@
         }
         nav a {
             margin-right: 10px;
+            text-decoration: none;
         }
         form input, form textarea {
             display: block;
             margin-bottom: 10px;
             width: 300px;
         }
+
+        .toggle-container {
+            margin-top: 10px;
+        }
+
         /*Featured Content Styles*/
         #featuredcontent div {
             padding: 15px;
@@ -37,18 +43,87 @@
         body.dark-mode a {
             color: #90caf9;
         }
+
+        /* Modal Styles */
+        .modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      max-width: 400px;
+      text-align: center;
+      position: relative;
+    }
+
+    .modal.hidden {
+      display: none;
+    }
+
+    .close-button {
+      position: absolute;
+      top: 0.5rem;
+      right: 1rem;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    /* Tooltip Styles */
+    .tooltip {
+      position: relative;
+    }
+
+    .tooltip::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #333;
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 100;
+    }
+
+    .tooltip:hover::after {
+      opacity: 1;
+    }
     </style>
 </head>
 <body>
 
+<!-- Modal -->
+  <div id="welcomeModal" class="modal hidden">
+    <div class="modal-content" role="dialog">
+      <span class="close-button" id="closeModal">&times;</span>
+      <h2>🛠️ Page Under Development</h2>
+      <p>This portfolio is currently a work in progress.</p>
+    </div>
+  </div>
+
 <header>
     <h1 id="welcome-message">Welcome to My Portfolio!</h1>
-
+    <div class="toggle-container">
     <!-- Dark mode toggle -->
      <label>
         <input type="checkbox" id="dark-mode-toggle"> Dark Mode
      </label>
-
+    </div>
     <nav>
         <a href="#about">About</a>
         <a href="#featuredcontent">Featured Content</a>
@@ -109,16 +184,27 @@
 </footer>
 
 <script>
-    //  Welcome message prompt
-    let userName = prompt("What is your name?");
-    if (userName) {
-        document.getElementById("welcome-message").innerText = "Welcome, " + userName + "!";
-        alert("Hello, " + userName + "! Enjoy browsing my portfolio.");
-    } else {
-        alert("Welcome to my portfolio!");
-    }
+    //  Show Welcome Modal Once Per Session
+    document.addEventListener("DOMContentLoaded", () => {
+      if (!sessionStorage.getItem("modal_shown")) {
+        const modal = document.getElementById("welcomeModal");
+        modal.classList.remove("hidden");
 
-    // Skills Loop
+        document.getElementById("closeModal").addEventListener("click", () => {
+          modal.classList.add("hidden");
+          sessionStorage.setItem("modal_shown", "true");
+        });
+      }
+
+      //Restore Dark Mode Preference
+      const savedTheme = localStorage.getItem("dark_mode");
+      if (savedTheme === "enabled") {
+        document.body.classList.add("dark-mode");
+        document.getElementById("dark-mode-toggle").checked = true;
+      }
+    });
+    
+      // Skills Loop
     const skills = ["HTML", "CSS", "JavaScript", "C"];
     const skillsList = document.getElementById("skills-list");
     skills.forEach(skill => {
@@ -140,30 +226,35 @@
         personalDiv.style.display = "block";
     }
 
-    //Dark mode 
-    const darkModeToggle = document.getElementById("dark-mode-toggle");
-    darkModeToggle.addEventListener("change", () => {
-        document.body.classList.toggle("dark-mode", darkModeToggle.checked);
+    //Dark Mode Toggle
+    const toggle = document.getElementById("dark-mode-toggle");
+    toggle.addEventListener("change", function () {
+      if (this.checked) {
+        document.body.classList.add("dark-mode");
+        localStorage.setItem("dark_mode", "enabled");
+      } else {
+        document.body.classList.remove("dark-mode");
+        localStorage.setItem("dark_mode", "disabled");
+      }
     });
 
-    //Contact form with timed confirmation
-    const form = document.querySelector("#contact form");
-    const messageArea = document.createElement("p");
-    document.getElementById("contact").appendChild(messageArea);
+    //Contact form with Delay
+    const form = document.getElementById("contact-form");
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      const nameInput = document.getElementById("name-field").value;
 
-    form.addEventListener("submit", (event) => {
-        event.preventDefault(); 
-        const senderName = document.querySelector("[name='senderName']").value;
-    
-        //Loading message
-        messageArea.textContent = "Sending message...";
-        messageArea.style.color = "blue";
+      const submitButton = form.querySelector("button[type='submit']");
+      const originalText = submitButton.textContent;
+      submitButton.textContent = "Sending...";
+      submitButton.disabled = true;
 
-        //Delay confirmation
-        setTimeout(() => {
-            messageArea.textContent = `Thank you, ${senderName}, your message has been sent!`;
-            messageArea.style.color = "green";
-        }, 2025);
+      setTimeout(() => {
+        alert(`Thank you, ${nameInput}! Your message has been sent.`);
+        submitButton.textContent = originalText;
+        submitButton.disabled = false;
+        form.reset();
+      }, 2500);
     });
 </script>
 

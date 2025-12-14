@@ -29,12 +29,7 @@
             margin-top: 10px;
         }
 
-        /*Featured Content Styles*/
-        #featuredcontent div {
-            padding: 15px;
-            margin: 10px 0;
-            background-color: #f9f9f9;
-        }
+        
         /*Dark Mode Styles*/
         body.dark-mode {
             background-color: #121212;
@@ -77,34 +72,20 @@
       cursor: pointer;
     }
 
-    /* Tooltip Styles */
-    .tooltip {
-      position: relative;
+    /* Project Cards */
+    .project-card {
+      background: #f5f5f5;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 8px;
     }
-
-    .tooltip::after {
-      content: attr(data-tooltip);
-      position: absolute;
-      bottom: 125%;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #333;
-      color: #fff;
-      padding: 6px 10px;
-      border-radius: 4px;
-      font-size: 0.85rem;
-      white-space: nowrap;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-      z-index: 100;
-    }
-
-    .tooltip:hover::after {
-      opacity: 1;
+    .project-card img {
+      width: 150px;
+      border-radius: 6px;
     }
     </style>
 </head>
+
 <body>
 
 <!-- Modal -->
@@ -117,16 +98,18 @@
   </div>
 
 <header>
-    <h1 id="welcome-message">Welcome to My Portfolio!</h1>
+    <h1>Welcome to My Portfolio!</h1>
     <div class="toggle-container">
+
     <!-- Dark mode toggle -->
      <label>
         <input type="checkbox" id="dark-mode-toggle"> Dark Mode
      </label>
     </div>
+
     <nav>
         <a href="#about">About</a>
-        <a href="#featuredcontent">Featured Content</a>
+        <a href="#skills">Skills</a>
         <a href="#projects">Projects</a>
         <a href="#contact">Contact</a>
     </nav>
@@ -135,42 +118,23 @@
 <main>
     <section id="about">
         <h2>About Me</h2>
-        <p>Hello! My name is Donyetta and I'm a Software Development & Coding student at ECPI University, passionate about creating user-friendly websites and learning new technologies.</p>
-        <h3>My Skills</h3>
-        <ul id="skills-list"></ul>
+        <p>Hello! My name is Donyetta and I'm a Software Development & Coding student at ECPI University, passionate about creating user-friendly websites and learning new technologies.</p>        
     </section>
 
-    <section id="featuredcontent">
-        <h2>Featured Content</h2>
-        <div id="university-resources">
-            <h3>University Resources</h3>
-            <a href="https://media.ecpi.net/lor/documents/Canvas/UniversityResources.html" target="_blank">ECPI University Resources</a>
-        </div>
-        <div id="personal-projects">
-            <h3>Personal Projects</h3>
-            <a href="https://github.com/Donyetta/Capstone" target="_blank">
-                <img src="https://via.placeholder.com/150" alt="Project1">
-            </a>
-        </div>
+    <section id="skills">
+      <h2>My Skills</h2>
+      <ul id="skills-list"></ul>
     </section>
-
+       
     <section id="projects">
         <h2>Projects</h2>
-        <a href="https://github.com/placeholder/project1" target="_blank">
-            <img src="https://via.placeholder.com/150" alt="Project 1">
-        </a>
-        <a href="https://github.com/placeholder/project2" target="_blank">
-            <img src="https://via.placeholder.com/150" alt="Project 2">
-        </a>
-        <a href="https://github.com/placeholder/project3" target="_blank">
-            <img src="https://via.placeholder.com/150" alt="Project 3">
-        </a>
+        <div id="project-container"></div>
     </section>
 
     <section id="contact">
         <h2>Contact Me</h2>
-        <form>
-            <input type="text" name="senderName" placeholder="Your Name" required>
+        <form id="contact-form">
+            <input type="text" id="name-field" name="senderName" placeholder="Your Name" required>
             <input type="email" name="senderEmail" placeholder="Your Email Address" required>
             <input type="text" name="subject" placeholder="Subject" required>
             <textarea name="message" placeholder="Your Message" rows="5" required></textarea>
@@ -203,30 +167,8 @@
         document.getElementById("dark-mode-toggle").checked = true;
       }
     });
-    
-      // Skills Loop
-    const skills = ["HTML", "CSS", "JavaScript", "C"];
-    const skillsList = document.getElementById("skills-list");
-    skills.forEach(skill => {
-        const li = document.createElement("li");
-        li.textContent = skill;
-        skillsList.appendChild(li);
-    });
 
-    //Featured Content conditional logic
-    const projectCount = document.querySelectorAll("#projects .project").length;
-    const universityDiv = document.getElementById("university-resources");
-    const personalDiv =document.getElementById("personal-projects");
-
-    if (projectCount > 3) {
-        universityDiv.style.display = "block";
-        personalDiv.style.display = "block";
-    } else {
-        universityDiv.style.display = "none";
-        personalDiv.style.display = "block";
-    }
-
-    //Dark Mode Toggle
+     //Dark Mode Toggle
     const toggle = document.getElementById("dark-mode-toggle");
     toggle.addEventListener("change", function () {
       if (this.checked) {
@@ -237,12 +179,69 @@
         localStorage.setItem("dark_mode", "disabled");
       }
     });
+    
+    //Projects
+    let storedProjects = sessionStorage.getItem("projects");
+
+    if (!storedProjects) {
+      const projects = [
+        { 
+          title: "Project Website",
+          summary: "This is a website I'm currently working on.",
+          image: "https://via.placeholder.com/150",
+          link: "https://github.com/Donyetta/project"
+        },
+        {
+          title: "Future App",
+          summary: "This is a future app I'm planning to build.",
+          image: "https://via.placeholder.com/150",
+          link: "https://github.com/Donyetta/future-app"
+        },
+        {
+          title: "Portfolio Website",
+          summary: "A personal site to showcase my work and contact details.",
+          image: "https://via.placeholder.com/150",
+          link: "https://github.com/Donyetta/portfolio"
+        }
+      ];
+      sessionStorage.setItem("projects", JSON.stringify(projects));
+      storedProjects = JSON.stringify(projects);
+    }
+
+    const projectArray = JSON.parse(sessionStorage.getItem("projects"));
+    const projectContainer = document.getElementById("project-container");
+
+    projectArray.forEach(project => {
+        const card = document.createElement("div");
+        card.className = "project-card";
+
+        card.innerHTML = `
+          <h3>${project.title}</h3>
+          <a href="${project.link}" target="_blank">
+            <img src="${project.image}" alt="${project.title} Image">
+          </a>
+          <p>${project.summary}</p>
+        `;   
+        projectContainer.appendChild(card);
+      });
+
+      // Skills Loop
+    const skills = ["HTML", "CSS", "JavaScript", "C"];
+    const skillsList = document.getElementById("skills-list");
+    
+    skills.forEach(skill => {
+        const li = document.createElement("li");
+        li.textContent = skill;
+        skillsList.appendChild(li);
+    });
+
 
     //Contact form with Delay
     const form = document.getElementById("contact-form");
     form.addEventListener("submit", function (event) {
       event.preventDefault();
       const nameInput = document.getElementById("name-field").value;
+
       const submitButton = form.querySelector("button[type='submit']");
       const originalText = submitButton.textContent;
       submitButton.textContent = "Sending...";
@@ -255,6 +254,9 @@
         form.reset();
       }, 2500);
     });
+
+
+    
 </script>
 
 </body>

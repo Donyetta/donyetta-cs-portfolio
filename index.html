@@ -243,7 +243,6 @@
     form.addEventListener("submit", function (event) {
       event.preventDefault();
       const nameInput = document.getElementById("name-field").value;
-
       const submitButton = form.querySelector("button[type='submit']");
       const originalText = submitButton.textContent;
       submitButton.textContent = "Sending...";
